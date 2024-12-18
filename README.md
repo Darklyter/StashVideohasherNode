@@ -1,6 +1,6 @@
 StashVideohasherNode script
 
-This is a very simple script that can be run on multiple systems to process a large Stash import of scenes.  Instead of running cover and phash generation tasks on the Stash server itself, this script will allow you to do the same thing on as many computers as you would like, with all of the nodes contributing back to the Stash server.
+This is a very simple script that can be run on multiple systems to process a large Stash import of scenes.  Instead of running cover, scrubber sprite, preview and phash generation tasks on the Stash server itself, this script will allow you to do the same thing on as many computers as you would like, with all of the nodes contributing back to the Stash server.
 
 It requires Peolic's videohashes binaries (https://github.com/peolic/videohashes) that you just need to put into the same directory as this script, then update the script to reflect the filename that you saved the binaries with.
 
