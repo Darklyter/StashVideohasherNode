@@ -22,6 +22,7 @@ from preview_video_generator import PreviewVideoGenerator
 
 # Stash import and settings
 from stashapi.stashapp import StashInterface
+# ~ stash = StashInterface({"host": "192.168.1.71", "port": 9999, "Apikey": "asdfasdfasdfasdfasdf"}) # Just an example in case you need an API key
 stash = StashInterface({"host": "192.168.1.71", "port": 9999})
 config = stash.get_configuration()["plugins"]
 
@@ -188,6 +189,10 @@ def main():
 
                 if os.path.isfile(image_filename):
                     os.remove(image_filename)
+
+        # Processes don't seem to require the sanitizing that direct call does...  still testing
+        ffmpeg_filename = filename
+        ffmpeg_filename = f'"{ffmpeg_filename}"'
 
         if generate_sprite:
             # Define input video path and output sprite path
