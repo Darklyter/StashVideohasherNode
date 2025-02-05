@@ -1,3 +1,7 @@
+This is a simple change to the original StashVideohasherNode script, which allows for the generation of sprites and previews on MacOS using the VideoToolbox hardware acceleration.
+
+The original script is available at: https://github.com/stashapp/StashVideohasherNode
+
 StashVideohasherNode script
 
 This is a very simple script that can be run on multiple systems to process a large Stash import of scenes.  Instead of running cover, scrubber sprite, preview and phash generation tasks on the Stash server itself, this script will allow you to do the same thing on as many computers as you would like, with all of the nodes contributing back to the Stash server.
