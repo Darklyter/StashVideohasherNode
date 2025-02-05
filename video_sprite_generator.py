@@ -47,7 +47,9 @@ class VideoSpriteGenerator:
         with open(self.vtt_path, 'w') as vtt_file:
             vtt_file.write("WEBVTT\n\n")
 
-            for i in tqdm(range(self.total_shots), desc=f"Creating Sprite: {os.path.basename(self.sprite_path)}"):
+            print(f"Creating sprite frames for {os.path.basename(self.sprite_path)}...")
+            
+            for i in tqdm(range(self.total_shots), desc="Progress", total=self.total_shots):
                 time = start_time + i * interval
                 output_file = os.path.join(self.output_dir, f'frame_{i:03d}.jpg')
                 command = [
@@ -56,9 +58,13 @@ class VideoSpriteGenerator:
                     '-i', self.video_path,
                     '-frames:v', '1',
                     '-q:v', '2',
+                    '-vf', 'scale=160:90',
+                    '-y',  # Overwrite output files without asking
+                    '-update', '1',  # Add update flag to handle single image output
                     output_file,
-                    '-loglevel', 'quiet'  # Suppress all ffmpeg output
+                    '-loglevel', 'error'  # Change to error to only show important issues
                 ]
+                
                 subprocess.run(command, check=True)
 
                 # Resize the image

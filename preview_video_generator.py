@@ -32,7 +32,9 @@ class PreviewVideoGenerator:
         start_times = self.get_start_times(video_duration)
         clips = []
 
-        for i, start_time in tqdm(enumerate(start_times), desc="Generating clips", total=len(start_times)):
+        print("Creating preview clips...")
+        
+        for i, start_time in tqdm(enumerate(start_times), desc="Progress", total=len(start_times)):
             clip_file = f"clip_{i:03d}.mp4"
             command = [
                 self.ffmpeg,
@@ -40,10 +42,11 @@ class PreviewVideoGenerator:
                 '-i', self.filename,
                 '-t', str(self.clip_length),
                 '-s', '640x360',
-                '-c:v', 'libx264',
-                '-crf', '18',  # High-quality setting
-                '-preset', 'slow',  # High-quality preset
-                '-loglevel', 'quiet'  # Suppress all ffmpeg output
+                '-c:v', 'h264',
+                '-preset', 'fast',
+                '-crf', '23',
+                '-y',
+                '-loglevel', 'error'
             ]
             if self.include_audio:
                 command.extend(['-c:a', 'aac', '-b:a', '192k', '-strict', 'experimental'])
@@ -74,12 +77,13 @@ class PreviewVideoGenerator:
 
         command = [
             self.ffmpeg,
+            '-hwaccel', 'videotoolbox',
+            '-hwaccel_output_format', 'videotoolbox_vld',
             '-f', 'concat',
             '-safe', '0',
             '-i', 'clips.txt',
-            '-c:v', 'libx264',
-            '-crf', '18',  # High-quality setting
-            '-preset', 'slow',  # High-quality preset
+            '-c:v', 'h264_videotoolbox',  # Use VideoToolbox encoder
+            '-b:v', '2M',  # Set video bitrate
             '-loglevel', 'quiet'  # Suppress all ffmpeg output
         ]
         if self.include_audio:
@@ -88,6 +92,10 @@ class PreviewVideoGenerator:
             command.append('-an')
 
         command.append(self.output_path)
+        
+        # Print the ffmpeg command
+        print(f"FFmpeg concat command: {' '.join(command)}")
+        
         subprocess.run(command, check=True)
 
         # Cleanup

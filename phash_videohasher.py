@@ -23,7 +23,11 @@ from preview_video_generator import PreviewVideoGenerator
 # Stash import and settings
 from stashapi.stashapp import StashInterface
 # ~ stash = StashInterface({"host": "192.168.1.71", "port": 9999, "Apikey": "asdfasdfasdfasdfasdf"}) # Just an example in case you need an API key
-stash = StashInterface({"host": "192.168.1.71", "port": 9999})
+stash = StashInterface({
+    "host": "10.10.10.3",  # Use the IP address that works in browser
+    "port": 9999, 
+    "Apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJmYXphbWJ1amEiLCJzdWIiOiJBUElLZXkiLCJpYXQiOjE3Mzc4NTgwNDJ9.6kGnmd0YnwVdh25JGsUMlf8zpKI3xqW85cYygzzhycw"
+})
 config = stash.get_configuration()["plugins"]
 
 # Stash very likely has different mount paths than the node, so any translations should be listed here.
@@ -31,24 +35,25 @@ config = stash.get_configuration()["plugins"]
 # I have sample translations for both my Linux and Windows systems
 
 # Windows
+# translations = [
+#     {'orig': '/data/', 'local': 'S:/'},
+#     {'orig': '/xerxes/', 'local': 'P:/'},
+#     {'orig': '/data_stranghouse/', 'local': 'R:/'},
+#     {'orig': '/mnt/gomorrah/', 'local': 'G:/'},
+# ]
+# Linux/Mac translations
 translations = [
-    {'orig': '/data/', 'local': 'S:/'},
-    {'orig': '/xerxes/', 'local': 'P:/'},
-    {'orig': '/data_stranghouse/', 'local': 'R:/'},
-    {'orig': '/mnt/gomorrah/', 'local': 'G:/'},
+    {'orig': '/WD18TB/Software/srv', 'local': '/Volumes/WD18TB/Software/srv'},
+    {'orig': '/WD18TB/Temp', 'local': '/Volumes/WD18TB/STemp'},
+    {'orig': '/Share/Software/srv', 'local': '/Volumes/Share/Software/srv'},
+    {'orig': '/data/usenet/complete/xxx', 'local': '/Volumes/data/usenet/complete/xxx'},
 ]
-# Linux
-# ~ translations = [
-    # ~ {'orig': '/data/', 'local': '/mnt/strangyr/'},
-    # ~ {'orig': '/xerxes/', 'local': '/mnt/xerxes/'},
-    # ~ {'orig': '/data_stranghouse/', 'local': '/mnt/Stranghouse/'},
-# ~ ]
 
 # This is silly, and there's probably a workaround but I had to use double quotes (") around filenames in Windows
 # and single quotes (') around filenames in Linux for FFMPEG to work correctly.  For Windows, use regular backslashes here
-windows = True
+windows = False
 binary_windows = r".\videohashes-windows.exe"
-binary_linux = r"./videohashes-linux"
+binary_linux = r"./videohashes-darwin-amd64"
 
 # You can use Python's static_ffmpeg or binaries you already have
 # ~ ffmpeg = "static_ffmpeg"
@@ -56,9 +61,9 @@ binary_linux = r"./videohashes-linux"
 # Windows FFMPEG Binaries
 ffmpeg = r"c:\mediatools\ffmpeg.exe"
 ffprobe = r"c:\mediatools\ffprobe.exe"
-# Linux FFMPEG Binaries
-# ~ ffmpeg = r"/usr/bin/ffmpeg"
-# ~ ffprobe = r"/usr/bin/ffprobe"
+# Mac FFMPEG Binaries
+ffmpeg = r"/opt/homebrew/bin/ffmpeg"
+ffprobe = r"/opt/homebrew/bin/ffprobe"
 
 # Simply tags in Stash that identifies "This scene is being worked on", or has an error.
 # I called mine 'Work_Hashing', "Work_Hash_Error" and "Work_Cover_Error", but they can be anything.  Just need the numeric ids from your Stash here
@@ -74,17 +79,17 @@ cover_error_tag = 15019
 
 # Config for Sprite image generation
 generate_sprite = True
-sprite_path = r"Y:/stash/generated/vtt"
+sprite_path = r"/Volumes/docker/appdata/stashapp/generated/vtt"
 # ~ sprite_path = r"/mnt/stash/stash/generated/vtt"
 
 # Config for preview video generation
 generate_preview = True
-preview_path = r"Y:/stash/generated/screenshots"
+preview_path = r"/Volumes/docker/appdata/stashapp/generated/screenshots"
 # ~ preview_path = r"/mnt/stash/stash/generated/screenshots"
-preview_audio = False  # Do you want your previews to have audio included?
-preview_clips = 15  # The number of clips to sample over the course of the source video
-preview_clip_length = 1  # How long each clip should be
-preview_skip_seconds = 15  # The number of seconds to skip of the source video before starting to take samples, to avoid intros
+preview_audio = False
+preview_clips = 15
+preview_clip_length = 1
+preview_skip_seconds = 15
 
 
 def main():
