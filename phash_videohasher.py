@@ -1,12 +1,28 @@
 #!/usr/bin/python
 
-# You'll need python 3.10+ and the following modules:
-# pip install requests
-# pip install stashapp-tools
-# pip install tqdm
-# pip install pillow
+"""
+StashVideohasherNode - Video Hash and Preview Generator for Stash
 
-# You will also need Peolic's videohashes utility.  You can download it from: https://github.com/peolic/videohashes/releases
+This version is optimized for MacOS with FFmpeg VideoToolbox hardware acceleration.
+
+Requirements:
+- Python 3.10+
+- FFmpeg with VideoToolbox support (installed via Homebrew)
+- Peolic's videohashes utility (darwin-amd64 version)
+
+Installation:
+1. Install dependencies:
+   pip install requests stashapp-tools tqdm pillow
+
+2. Install FFmpeg via Homebrew:
+   brew install ffmpeg
+
+3. Download videohashes:
+   - Get darwin-amd64 version from: https://github.com/peolic/videohashes/releases
+   - Make it executable: chmod +x videohashes-darwin-amd64
+
+4. Configure Stash paths in the translations section below
+"""
 
 import re
 import os
@@ -20,56 +36,34 @@ import base64
 from video_sprite_generator import VideoSpriteGenerator
 from preview_video_generator import PreviewVideoGenerator
 
-# Stash import and settings
+# Stash connection
 from stashapi.stashapp import StashInterface
-# ~ stash = StashInterface({"host": "192.168.1.71", "port": 9999, "Apikey": "asdfasdfasdfasdfasdf"}) # Just an example in case you need an API key
 stash = StashInterface({
-    "host": "10.10.10.3",  # Use the IP address that works in browser
-    "port": 9999, 
-    "Apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJmYXphbWJ1amEiLCJzdWIiOiJBUElLZXkiLCJpYXQiOjE3Mzc4NTgwNDJ9.6kGnmd0YnwVdh25JGsUMlf8zpKI3xqW85cYygzzhycw"
+    "host": "localhost",  # Change to your Stash server IP
+    "port": 9999,
+    "Apikey": ""  # Add your API key here if required
 })
-config = stash.get_configuration()["plugins"]
 
-# Stash very likely has different mount paths than the node, so any translations should be listed here.
-# It's a simple find and replace or the first match.  Btw for Windows systems, please use unix style forward slashes, for example "C:/Media/Path/"
-# I have sample translations for both my Linux and Windows systems
-
-# Windows
-# translations = [
-#     {'orig': '/data/', 'local': 'S:/'},
-#     {'orig': '/xerxes/', 'local': 'P:/'},
-#     {'orig': '/data_stranghouse/', 'local': 'R:/'},
-#     {'orig': '/mnt/gomorrah/', 'local': 'G:/'},
-# ]
-# Linux/Mac translations
+# Path translations - modify these to match your setup
+# Example: if Stash sees "/data/videos" but it's mounted as "/Volumes/data/videos" on your Mac
 translations = [
-    {'orig': '/WD18TB/Software/srv', 'local': '/Volumes/WD18TB/Software/srv'},
-    {'orig': '/WD18TB/Temp', 'local': '/Volumes/WD18TB/STemp'},
-    {'orig': '/Share/Software/srv', 'local': '/Volumes/Share/Software/srv'},
-    {'orig': '/data/usenet/complete/xxx', 'local': '/Volumes/data/usenet/complete/xxx'},
+    {'orig': '/data/', 'local': '/Volumes/data/'},
+    {'orig': '/media/', 'local': '/Volumes/media/'},
 ]
 
-# This is silly, and there's probably a workaround but I had to use double quotes (") around filenames in Windows
-# and single quotes (') around filenames in Linux for FFMPEG to work correctly.  For Windows, use regular backslashes here
-windows = False
-binary_windows = r".\videohashes-windows.exe"
-binary_linux = r"./videohashes-darwin-amd64"
+# System configuration
+windows = False  # Set to False for MacOS
+binary_windows = r".\videohashes-windows.exe"  # Not used on MacOS
+binary_linux = r"./videohashes-darwin-amd64"  # Used for MacOS
 
-# You can use Python's static_ffmpeg or binaries you already have
-# ~ ffmpeg = "static_ffmpeg"
-
-# Windows FFMPEG Binaries
-ffmpeg = r"c:\mediatools\ffmpeg.exe"
-ffprobe = r"c:\mediatools\ffprobe.exe"
-# Mac FFMPEG Binaries
+# FFmpeg paths (Homebrew default locations)
 ffmpeg = r"/opt/homebrew/bin/ffmpeg"
 ffprobe = r"/opt/homebrew/bin/ffprobe"
 
-# Simply tags in Stash that identifies "This scene is being worked on", or has an error.
-# I called mine 'Work_Hashing', "Work_Hash_Error" and "Work_Cover_Error", but they can be anything.  Just need the numeric ids from your Stash here
-hashing_tag = 15015
-hashing_error_tag = 15018
-cover_error_tag = 15019
+# Stash workflow tags - modify these IDs to match your Stash tags
+hashing_tag = 15015        # Tag for scenes being processed
+hashing_error_tag = 15018  # Tag for scenes with hashing errors
+cover_error_tag = 15019    # Tag for scenes with cover errors
 
 #
 # Note about Sprite and Preview options... to generate sprites and previews you must have the appropriate Stash directories available
@@ -79,12 +73,12 @@ cover_error_tag = 15019
 
 # Config for Sprite image generation
 generate_sprite = True
-sprite_path = r"/Volumes/docker/appdata/stashapp/generated/vtt"
+sprite_path = r"/opt/stash/generated/vtt"  # Change to your Stash VTT directory
 # ~ sprite_path = r"/mnt/stash/stash/generated/vtt"
 
 # Config for preview video generation
 generate_preview = True
-preview_path = r"/Volumes/docker/appdata/stashapp/generated/screenshots"
+preview_path = r"/opt/stash/generated/screenshots"  # Change to your Stash screenshots directory
 # ~ preview_path = r"/mnt/stash/stash/generated/screenshots"
 preview_audio = False
 preview_clips = 15
