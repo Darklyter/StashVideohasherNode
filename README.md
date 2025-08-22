@@ -23,7 +23,8 @@ The script is well-commented. For questions, reach out via Discord (if you know 
 
 You can run the script with the following options, all of which can also be set in `config.py`:
 
-```bash usage: phash_videohasher_main.py [-h] [--windows] [--generate-sprite] [--generate-preview]
+```bash
+usage: phash_videohasher_main.py [-h] [--windows] [--generate-sprite] [--generate-preview]
                                  [--batch-size BATCH_SIZE] [--max-workers MAX_WORKERS]
                                  [--dry-run] [--verbose] [--once]
 
