@@ -18,6 +18,7 @@ This is a lightweight script designed to distribute the processing of large Stas
 ## 💬 Support
 
 The script is well-commented. For questions, reach out via Discord (if you know this script, you probably know how to find me there).
+Also one quick note, the file hashes created are OSHASH.  If you currently have your Stash instance set for MD5, these will not be compatible
 
 ## 🛠️ CLI Options
 
