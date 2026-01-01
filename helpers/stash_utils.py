@@ -8,7 +8,11 @@ stash = StashInterface({"host": stash_host, "port": stash_port})
 
 def log_scene_failure(scene_id, filename_pretty, step, error):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{timestamp} ❌ Scene {scene_id} — {filename_pretty} failed during {step}: {error}")
+    msg = f"{timestamp} ❌ Scene {scene_id} — {filename_pretty} failed during {step}: {error}"
+    try:
+        print(msg)
+    except UnicodeEncodeError:
+        print(msg.encode(errors='replace').decode())
 
 def reset_terminal():
     import platform
@@ -33,8 +37,12 @@ def tag_scene_error(scene_id, error_tag, error_msg=None):
     stash.update_scenes({"ids": scene_id, "tag_ids": {"ids": error_tag, "mode": "ADD"}})
     stash.update_scenes({"ids": scene_id, "tag_ids": {"ids": hashing_tag, "mode": "REMOVE"}})
     if error_msg:
-        with open("error_log.txt", "a") as log:
-            log.write(f"Scene {scene_id}: {error_msg}\n")
+        try:
+            with open("error_log.txt", "a", encoding="utf-8") as log:
+                log.write(f"Scene {scene_id}: {error_msg}\n")
+        except UnicodeEncodeError:
+            with open("error_log.txt", "a", encoding="utf-8", errors="replace") as log:
+                log.write(f"Scene {scene_id}: {error_msg}\n")
 
 def claim_scene(scene_id):
     if dry_run:
