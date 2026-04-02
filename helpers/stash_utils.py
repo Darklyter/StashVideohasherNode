@@ -1,10 +1,10 @@
 # stash_utils.py
 
 from stashapi.stashapp import StashInterface
-from config import hashing_tag, hashing_error_tag, cover_error_tag, dry_run, stash_host, stash_port
+from config import hashing_tag, hashing_error_tag, cover_error_tag, dry_run, stash_scheme, stash_host, stash_port, stash_api_key, excluded_paths
 from datetime import datetime
 
-stash = StashInterface({"host": stash_host, "port": stash_port})
+stash = StashInterface({"scheme": stash_scheme, "host": stash_host, "port": stash_port, "apikey": stash_api_key})
 
 def log_scene_failure(scene_id, filename_pretty, step, error):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -23,11 +23,13 @@ def get_total_scene_count():
     scenes = stash.find_scenes(
         f={
             "phash": {"value": "", "modifier": "IS_NULL"},
-            "tags": {"value": [hashing_tag, hashing_error_tag, cover_error_tag], "modifier": "EXCLUDES"}
+            "tags": {"value": [hashing_tag, hashing_error_tag, cover_error_tag], "modifier": "EXCLUDES"},
         },
         filter={"sort": "created_at", "direction": "DESC", "per_page": -1},
-        fragment="id"
+        fragment="id files{path}"
     )
+    if excluded_paths:
+        scenes = [s for s in scenes if not any(ep in s['files'][0]['path'] for ep in excluded_paths)]
     return len(scenes)
 
 def tag_scene_error(scene_id, error_tag, error_msg=None):

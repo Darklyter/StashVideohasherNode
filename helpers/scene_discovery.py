@@ -18,11 +18,14 @@ def discover_scenes():
     all_scenes = stash.find_scenes(
         f={
             "phash": {"value": "", "modifier": "IS_NULL"},
-            "tags": {"value": [config.hashing_tag, config.hashing_error_tag, config.cover_error_tag], "modifier": "EXCLUDES"}
+            "tags": {"value": [config.hashing_tag, config.hashing_error_tag, config.cover_error_tag], "modifier": "EXCLUDES"},
         },
         filter={"per_page": -1},  # Retrieve all matching scene IDs
-        fragment="id"
+        fragment="id files{path}"
     )
+
+    if config.excluded_paths:
+        all_scenes = [s for s in all_scenes if not any(ep in s['files'][0]['path'] for ep in config.excluded_paths)]
 
     # Step 2: Count total matching scenes
     total_count = len(all_scenes)
@@ -43,7 +46,7 @@ def discover_scenes():
     batch_scenes = stash.find_scenes(
         f={
             "phash": {"value": "", "modifier": "IS_NULL"},
-            "tags": {"value": [config.hashing_tag, config.hashing_error_tag, config.cover_error_tag], "modifier": "EXCLUDES"}
+            "tags": {"value": [config.hashing_tag, config.hashing_error_tag, config.cover_error_tag], "modifier": "EXCLUDES"},
         },
         filter={
             "sort": "created_at",           # Sort by creation date (newest first)
@@ -53,6 +56,9 @@ def discover_scenes():
         },
         fragment="id files{id path fingerprints{value type}} paths{screenshot}"
     )
+
+    if config.excluded_paths:
+        batch_scenes = [s for s in batch_scenes if not any(ep in s['files'][0]['path'] for ep in config.excluded_paths)]
 
     # Step 6: Return the batch of scenes to be processed
     return batch_scenes

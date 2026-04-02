@@ -5,7 +5,7 @@ import os
 import shutil
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
-from config import verbose  # ✅ Import verbose flag
+from config import verbose, nvenc
 
 class PreviewVideoGenerator:
     def __init__(self, filename, output_path, filehash, ffmpeg='ffmpeg', ffprobe='ffprobe',
@@ -49,9 +49,9 @@ class PreviewVideoGenerator:
                 '-i', self.filename,
                 '-t', str(self.clip_length),
                 '-s', '640x360',
-                '-c:v', 'libx264',
-                '-crf', '18',
-                '-preset', 'slow',
+                '-c:v', 'h264_nvenc' if nvenc else 'libx264',
+                '-cq:v' if nvenc else '-crf', '18',
+                '-preset', 'p4' if nvenc else 'fast',
                 '-loglevel', 'quiet'
             ]
             if self.include_audio:
@@ -97,9 +97,9 @@ class PreviewVideoGenerator:
             '-f', 'concat',
             '-safe', '0',
             '-i', concat_file,
-            '-c:v', 'libx264',
-            '-crf', '18',
-            '-preset', 'slow',
+            '-c:v', 'h264_nvenc' if nvenc else 'libx264',
+            '-cq:v' if nvenc else '-crf', '18',
+            '-preset', 'p4' if nvenc else 'fast',
             '-loglevel', 'quiet'
         ]
         if self.include_audio:
