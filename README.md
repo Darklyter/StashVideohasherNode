@@ -1,10 +1,11 @@
-❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗
-This is the original version of the Videohasher Node script.  
-I have been working on a new version (and by that I mean Claude has been working on it) that incorporates VAAPI, NVENC, Markers and a lot of other things.  
-It is currently in testing, but seems to be working well enough.  
-It is at [https://github.com/Darklyter/StashVideohasherNodeVAAPI ](https://github.com/Darklyter/StashVideohasherNodeVAAPI)
-I apologize for the names of these things...  I am neither creative nor imaginative.  I also like vanilla ice cream if that gives you an idea.
-❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗
+<p align="center">❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗<br>
+This is the original version of the Videohasher Node script.<br>
+I have been working on (Ok...  Claude) a new version that incorporates:<br>
+VAAPI, NVENC, Marker generation, API Key, standalone generation for items, etc.<br>
+It is currently in testing, but seems to be working well enough. <br>
+It is at <a href="https://github.com/Darklyter/StashVideohasherNodeVAAPI">StashVideohasherNodeVAAPI</a><br><br>
+I apologize for the names of these things...  I am neither creative nor imaginative.  I also like vanilla ice cream if that gives you an idea.<br>
+❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗</p>
 
 
 
